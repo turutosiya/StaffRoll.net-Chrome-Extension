@@ -9,7 +9,7 @@
 	}
 
 	body {
-		min-width:357px;
+		min-width:400px;
 		overflow-x:hidden;
 	}
 
@@ -72,8 +72,12 @@
 	.tweets .created_at {
 		color: #999999;
 	}
+
+  .tumblr div {
+    margin-left : 5px;
+  }
 	</style>
-	<script src='jquery-1.4.4.min.js'></script>
+  <script src='http://code.jquery.com/jquery-1.4.4.min.js'></script>
 	<script>
 		
 		function constructImageURL(photo) {
@@ -141,6 +145,31 @@
 				}
 			);
 			
+      $.getJSON(
+        'http://staffroll.net/api/read/json?callback=?',
+        {
+        },
+        function(data, status, xhr) {
+          $('.tumblr').html('');
+          $.each(data.posts, function(i, post){
+             
+            $('<div>')
+              .append(
+                $('<a>')
+                  .attr('href', post.url)
+                  .html(post["regular-title"])
+              )
+              .append(
+                $('<p>')
+                  .html(post["regular-body"])
+              )
+              .appendTo('.tumblr')
+              
+              return false;
+          });
+        }
+      );
+      
 			
 			// set click handler 
 			$('a').live('click', function(){
@@ -161,22 +190,25 @@
 </head>
 <body>
 	<h1>StaffRoll.net</h1>
-	<b>UNDER CONSTRUCTION</b>
-	
+  
 	<hr/>
 	
 	<h2>スタッフロール・ネットとは?</h2>
-	<p>StaffRoll.netにWEBサイトの制作者情報を登録しておくことで、<br/>
-	WEB制作者の名前をスタッフロール風に表示するサービスです。<br/>
-	実績をたくさん登録し業績アピールに活用してください!<br/>
+	<p><b>「映画のようなエンドクレジットなんでWEBサイトにはないの？」</b><br/>
+     というのを発端に始まったプロジェクト。</br>
+  WEBサイトの制作者情報を登録しておくことで、制作者の名前をスタッフロール風に表示するサービスです。<br/>
+	実績をたくさん登録し業績アピールに活用してください!<br/></br/>
 	くわしくは&nbsp;<a href="http://ow.ly/3cWWV">こちら</a></p>
-	
+  
 	<hr/>
+  
+  <h2>最新情報!</h2>
+  <div class="tumblr">
+  
+  </div>
 	
-	<h2>開発合宿計画中！</h2>
-	<p>StaffRoll.netの開発あたって開発合宿を計画しています。<br/>
-	くわしくは&nbsp;<a href="http://ow.ly/3cX55">こちら</a></br><i>(※ リンク先のページを見るには、Google Groups への参加が必要です。)</i></p>
-	
+  <hr/>
+  
 	<h3>Presented by <a href="http://jobsa.jp/">JOBSA</a></h3>
 	<div class="flickr">
 		loading...
@@ -187,4 +219,5 @@
 	<ul class="tweets">
 		loading...
 	</ul>
+  
 </body>
