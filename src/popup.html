@@ -1,0 +1,189 @@
+<head> 
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<style>
+	* {
+		font-family: 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', メイリオ, Meiryo, Osaka, 'ＭＳ Ｐゴシック', 'MS P Gothic', sans-serif;
+		font-style: normal;
+		font-variant: normal;
+		font-size: 9pt;
+	}
+
+	body {
+		min-width:357px;
+		overflow-x:hidden;
+	}
+
+	h1 {
+		font-size: 18pt;
+	}
+	
+	h2 {
+		font-size: 12pt;
+	}
+	
+	h3 {
+		font-size: 10pt;
+	}
+	
+	p {
+		font-size: 9pt;
+	}
+
+	img {
+		border:1px solid #7799DD;
+	}
+	
+	.flickr img {
+		margin:5px;
+		vertical-align:middle;
+		width:75px;
+		height:75px;
+	}
+	
+	.tweets {
+		padding: 0px;
+		list-style-type: none;
+	}
+	
+	.tweets li {
+		margin: 0px 0px 5px 5px;
+		clear: both;
+	}
+	
+	.tweets .image {
+		float: left;
+		margin: 3px 0px 0px 0px ;
+		padding: 0px;
+		width: 32px;
+	}
+	
+	.tweets .text {
+		float: left;
+		margin: 0px 0px 0px 5px;
+		padding: 0px;
+		width: 300px;
+	}
+	
+	.tweets .text p {
+		margin: 0;
+		padding: 0;
+	}
+	
+	.tweets .created_at {
+		color: #999999;
+	}
+	</style>
+	<script src='jquery-1.4.4.min.js'></script>
+	<script>
+		
+		function constructImageURL(photo) {
+			return "http://farm" + photo.farm +
+					".static.flickr.com/" + photo.server +
+					"/" + photo.id +
+					"_" + photo.secret +
+					"_s.jpg";
+		}
+		
+		$(function(){
+			var sort = [
+				"date-posted-asc",
+				"date-posted-desc",
+				"date-taken-asc",
+				"date-taken-desc",
+				"interestingness-desc",
+				"interestingness-asc",
+				"relevance"
+			]
+			sort = sort[Math.floor(Math.random() * sort.length)];
+			
+			$.getJSON(
+				'http://api.flickr.com/services/rest/?format=json&jsoncallback=?',
+				{
+					method: "flickr.photos.search",
+					api_key: "6a9f844eb8f33413277e030ea786ebd6",
+					// text: "sugarcrm",
+					user_id: "47492034@N04", //jobsajp
+					safe_search: 1,
+					content_type: 1, // only photos
+					sort: sort,
+					per_page: 4
+				},
+				function(data, status, xhr) {
+					$('.flickr').html('');
+					$.each(data.photos.photo, function(i, photo){
+						$('<a>')
+							.attr('href', 'http://www.flickr.com/photos/47492034@N04/'+photo.id)
+							.append($('<img>').attr('src', constructImageURL(photo)))
+							.appendTo('.flickr');
+					});
+				}
+			);
+			
+			$.getJSON(
+				'http://search.twitter.com/search.json?callback=?',
+				{
+					q: "#StaffRoll"
+				},
+				function(data, status, xhr) {
+					$('.tweets').html('');
+					$.each(data.results, function(i, tweet){
+						$('<li>').append(
+							$('<div>').attr('class', 'image').append(
+								$('<a>').attr('href', 'http://twitter.com/' + tweet.from_user).append(
+									$('<img>').attr('src', tweet.profile_image_url).attr('height', '32').attr('width', '32')))).append(
+							$('<div>').attr('class', 'text').append(
+								$('<p>').html(tweet.text+'&nbsp;').append(
+									$('<a>').attr('href', 'http://twitter.com/' + tweet.from_user + '/status/' + tweet.id_str).append(
+										$('<span>').attr('class', 'created_at').text(tweet.created_at))))).append(
+							$('<br>'))
+							.appendTo('.tweets');
+					});
+				}
+			);
+			
+			
+			// set click handler 
+			$('a').live('click', function(){
+				if(!$(this).attr('href')) return;
+				
+				// open in new tab
+				chrome.tabs.create(
+					{
+						url: $(this).attr('href')
+					},
+					function(tab){
+						// nothing to do 
+					}
+				);
+			});
+		});
+	</script>
+</head>
+<body>
+	<h1>StaffRoll.net</h1>
+	<b>UNDER CONSTRUCTION</b>
+	
+	<hr/>
+	
+	<h2>スタッフロール・ネットとは?</h2>
+	<p>StaffRoll.netにWEBサイトの制作者情報を登録しておくことで、<br/>
+	WEB制作者の名前をスタッフロール風に表示するサービスです。<br/>
+	実績をたくさん登録し業績アピールに活用してください!<br/>
+	くわしくは&nbsp;<a href="http://ow.ly/3cWWV">こちら</a></p>
+	
+	<hr/>
+	
+	<h2>開発合宿計画中！</h2>
+	<p>StaffRoll.netの開発あたって開発合宿を計画しています。<br/>
+	くわしくは&nbsp;<a href="http://ow.ly/3cX55">こちら</a></br><i>(※ リンク先のページを見るには、Google Groups への参加が必要です。)</i></p>
+	
+	<h3>Presented by <a href="http://jobsa.jp/">JOBSA</a></h3>
+	<div class="flickr">
+		loading...
+	</div>
+	
+	<h3>Developer's Voice</h3>
+	<ul class="tweets">
+		loading...
+	</ul>
+</body>
